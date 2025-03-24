@@ -10,6 +10,7 @@ export const Home = () => {
   );
   const [blessDeck, setBlessDeck] = useState(10);
   const [curseDeck, setCurseDeck] = useState(10);
+  const [activeCards, setActiveCards] = useState([]);
 
   const initialMonsterModifierDeck = [
     {
@@ -118,36 +119,41 @@ export const Home = () => {
     }
   };
 
-  const drawCard = () => {
+  const drawCard = (targets) => {
     const deck = monsterModifierDeck;
-    const randomIndex = Math.floor(Math.random() * deck.length);
-    const drawnCard = deck[randomIndex];
-    console.log("drawnCard ", drawnCard);
-    if (drawnCard.value === null && drawnCard.shuffle === false) {
-      console.log("Curse card drawn!");
-      setCurseDeck(curseDeck + 1);
-    }
-    if (drawnCard.value === "x2" && drawnCard.shuffle === false) {
-      console.log("Bless card drawn!");
-      setBlessDeck(blessDeck + 1);
-    }
+    const drawnCards = [];
+    const randomIndexes = [];
+    for (let i = 1; i <= targets; i++) {
+      const randomIndex = Math.floor(Math.random() * deck.length);
+      const drawnCard = deck[randomIndex];
 
-    const newDeck = [
-      ...deck.slice(0, randomIndex),
-      ...deck.slice(randomIndex + 1),
-    ];
-    setMonsterModifierDeck(newDeck);
-    if (drawnCard.shuffle === true) {
-      reShuffle();
+      if (drawnCard.value === null && drawnCard.shuffle === false) {
+        console.log("Curse card drawn!");
+        setCurseDeck(curseDeck + 1);
+      }
+      if (drawnCard.value === "x2" && drawnCard.shuffle === false) {
+        console.log("Bless card drawn!");
+        setBlessDeck(blessDeck + 1);
+      }
+      drawnCards.push(drawnCard);
+      randomIndexes.push(randomIndex);
+      console.log("drawnCard ", drawnCard);
     }
+    randomIndexes.forEach((randomIndex) => {
+      deck.splice(randomIndex, 1);
+    });
 
-    console.log("newDeck ", newDeck);
+    setMonsterModifierDeck(deck);
+    setActiveCards(drawnCards);
+    drawnCards.forEach((card) => {
+      if (card.shuffle === true) {
+        reShuffle();
+      }
+    });
   };
 
   const reShuffle = () => {
-    console.log("intialDeck ", initialMonsterModifierDeck);
     const baseDeck = initialMonsterModifierDeck;
-    console.log("reShuffle before statuses ", baseDeck);
     for (let i = 10; i > curseDeck; i--) {
       baseDeck.push(curseCard);
     }
@@ -163,8 +169,14 @@ export const Home = () => {
       <input
         type="button"
         className="btn btn-primary"
-        value="Draw"
-        onClick={() => drawCard()}
+        value="Draw 1"
+        onClick={() => drawCard(1)}
+      />
+      <input
+        type="button"
+        className="btn btn-primary"
+        value="Draw 2"
+        onClick={() => drawCard(2)}
       />
       <input
         type="button"
@@ -183,10 +195,20 @@ export const Home = () => {
       <p className="mt-3">
         Monster Modifier Deck: {monsterModifierDeck.length}
       </p>
-      <div>
-        <h5>Current Deck:</h5>
-      </div>
       <CurrentDeck deck={monsterModifierDeck} />
+      <div className="mt-3">
+        <h5>Active Cards:</h5>
+        {activeCards.length > 0 ? (
+          activeCards.map((card, index) => (
+            <p key={index}>
+              {card.value === null ? "x0" : card.value}{" "}
+              {card.shuffle ? "(Shuffle)" : ""}
+            </p>
+          ))
+        ) : (
+          <p>No active cards drawn yet.</p>
+        )}
+      </div>
     </div>
   );
 };
