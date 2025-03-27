@@ -4,8 +4,12 @@ import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { number } from "prop-types";
 import { Statuses } from "../assets/Statuses.jsx";
 
-export const PlayerCard = ({ player }) => {
+export const PlayerCard = ({ player, index }) => {
   const { store, dispatch } = useGlobalReducer();
+
+  const handleExpand = () => {
+    dispatch({ type: "TOGGLE_PLAYER_MINIMIZED", payload: index });
+  };
 
   return (
     <div
@@ -44,7 +48,13 @@ export const PlayerCard = ({ player }) => {
         </div>
         <input
           type="button"
-          className="btn btn-primary w-100 mt-auto"
+          className="btn btn-secondary w-50 mt-auto"
+          value="Mimimize"
+          onClick={handleExpand}
+        />
+        <input
+          type="button"
+          className="btn btn-primary w-50 mt-auto"
           value="Draw Loot"
         />
       </div>
@@ -75,7 +85,13 @@ export const PlayerCard = ({ player }) => {
   );
 };
 
-export const PlayerCardMinimized = ({ player }) => {
+export const PlayerCardMinimized = ({ player, index }) => {
+  const { store, dispatch } = useGlobalReducer();
+
+  const handleExpand = () => {
+    dispatch({ type: "TOGGLE_PLAYER_MINIMIZED", payload: index });
+  };
+
   return (
     <div
       className="d-flex border border-success mt-5"
@@ -93,6 +109,7 @@ export const PlayerCardMinimized = ({ player }) => {
                 type="button"
                 className="btn btn-success w-100"
                 value="Expand"
+                onClick={handleExpand}
               />
             </div>
           </div>

@@ -2,8 +2,8 @@ import {
   blessCard,
   curseCard,
   initialMonsterModifierDeck,
-} from "./components/monsterModifierLib";
-import { Statuses } from "./assets/Statuses";
+} from "./components/monsterModifierLib.jsx";
+import { Statuses } from "./assets/Statuses.jsx";
 
 export const initialStore = () => {
   return {
@@ -211,6 +211,18 @@ export default function storeReducer(store, action = {}) {
         dark: store.dark > 0 ? store.dark - 1 : 0,
         activeCard: [],
       };
+    case "TOGGLE_PLAYER_MINIMIZED": {
+      const updatedPlayers = store.players.map((player, index) => {
+        if (index === action.payload) {
+          return { ...player, minimized: !player.minimized };
+        }
+        return player;
+      });
+      return {
+        ...store,
+        players: updatedPlayers,
+      };
+    }
     default:
       throw Error("Unknown action.");
   }

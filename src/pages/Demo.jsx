@@ -15,9 +15,9 @@ export const Demo = () => {
     <div>
       {store.players.map((player, index) =>
         !player.minimized ? (
-          <PlayerCard key={index} player={player} />
+          <PlayerCard key={index} player={player} index={index} />
         ) : (
-          <PlayerCardMinimized key={index} player={player} />
+          <PlayerCardMinimized key={index} player={player} index={index} />
         )
       )}
     </div>
